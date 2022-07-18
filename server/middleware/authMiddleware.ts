@@ -1,21 +1,21 @@
 import UserModel from "../features/user/userModel";
-import * as jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken"
 
-const jwtAuth = async(req, res, next) => {
-    if (req.headers.authorization?.startsWith('Bearer')) {
+const jwtAuth = async (req, res, next) => {
+    const cookies: Array<string> | undefined = req.headers.cookie?.split("; ")
+    const tokenCookie: string | undefined = cookies?.find(cookie => cookie.startsWith('token='))
+    const token = tokenCookie?.split("token=")[1]
+
+    if (token !== undefined) {
         try {
-            const token = req.headers.authorization.split(' ')[1]
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
-
             req.user = await UserModel.findById(decoded.id).select('-password')
 
             next()
         } catch (e) {
             res.status(401).json({ error: "Not authorized" })
         }
-    }
-
-    if (!req.headers.authorization?.startsWith('Bearer')) {
+    } else {
         res.status(401).json({ error: "Not authorized" })
     }
 }

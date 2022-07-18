@@ -39,12 +39,18 @@ async function login(req, res): Promise<void> {
     if (user === null) throw ("User not found")
     if (!await passwordMatch()) throw ("Wrong password")
 
-    res.status(201)
-        .json({ userID: user._id, username: user.username, token: token(user._id) })
+    res.cookie('token', token({ userID: user._id }), {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        maxAge: 60000 * 60 * 24 * 30
+    })
+
+    res.status(201).json({ userID: user._id, username: user.username })
 }
 
-const token = (id: object) =>
-    jwt.sign({ id }, process.env.JWT_SECRET, {
+const token = (userID: object): string =>
+    jwt.sign(userID, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN
     })
 

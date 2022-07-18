@@ -4,9 +4,7 @@ import axios, { AxiosPromise } from "axios";
 const URL: string = process.env.REACT_APP_PROXY as string
 
 const axiosChat = axios.create({
-    headers: {
-        Authorization: "Bearer " + localStorage.getItem('token')
-    }
+    withCredentials: true
 })
 
 function sendMessageRequest(message: ISendMessage): AxiosPromise {

@@ -20,7 +20,6 @@ function Login(): JSX.Element {
     function onLogin(user: ILogin): void {
         localStorage.setItem('userID', user.userID)
         localStorage.setItem('username', user.username)
-        localStorage.setItem('token', user.token)
 
         navigate("/chat")
     }
