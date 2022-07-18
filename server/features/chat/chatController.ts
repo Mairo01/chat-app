@@ -23,11 +23,13 @@ async function getMessages(req, res): Promise<void> {
 
     if (roomID === null || roomID === undefined) throw ("Missing room's id")
 
-    const messages = await ChatMessageModel
-        .find({ room: roomID })
-        .sort({ createdAt: 'ascending' })
-        .limit(20)
-        .populate('sender', 'username')
+    const messages = (
+        await ChatMessageModel
+            .find({ room: roomID })
+            .sort({ createdAt: 'descending' })
+            .limit(20)
+            .populate('sender', 'username')
+    ).reverse()
 
     res.status(200).json(messages)
 }
